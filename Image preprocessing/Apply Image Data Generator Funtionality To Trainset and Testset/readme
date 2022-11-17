@@ -1,1 +1,8 @@
-
+# ImageDataGenerator
+datagen = ImageDataGenerator(
+        rotation_range=10, # rotation
+        width_shift_range=0.2, # horizontal shift
+        height_shift_range=0.2, # vertical shift
+        zoom_range=0.2, # zoom
+        horizontal_flip=True, # horizontal flip
+        brightness_range=[0.2,1.2]) # brightness
