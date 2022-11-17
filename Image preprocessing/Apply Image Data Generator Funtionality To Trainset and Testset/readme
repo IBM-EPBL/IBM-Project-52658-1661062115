@@ -1,8 +1,18 @@
-# ImageDataGenerator
-datagen = ImageDataGenerator(
-        rotation_range=10, # rotation
-        width_shift_range=0.2, # horizontal shift
-        height_shift_range=0.2, # vertical shift
-        zoom_range=0.2, # zoom
-        horizontal_flip=True, # horizontal flip
-        brightness_range=[0.2,1.2]) # brightness
+train_datagen = ImageDataGenerator(rescale=1./255,
+    shear_range=0.2,
+    zoom_range=0.2,
+    horizontal_flip=True)
+
+train_generator = train_datagen.flow_from_directory(
+    train_data_dir,
+    target_size=(img_width, img_height),
+    batch_size=32,
+    class_mode='binary')
+
+model.fit_generator(
+    train_generator,
+    samples_per_epoch=nb_train_samples,
+    nb_epoch=nb_epoch,
+    validation_data=??,
+    nb_val_samples=nb_validation_samples)
+
