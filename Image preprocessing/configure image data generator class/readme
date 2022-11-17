@@ -1,1 +1,94 @@
+# ImageDataGenerator shifting
+datagen = ImageDataGenerator(width_shift_range=0.2, height_shift_range=0.2)
 
+# iterator
+aug_iter = datagen.flow(img, batch_size=1)
+
+# generate samples and plot
+fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(15,15))
+
+# generate batch of images
+for i in range(3):
+
+	# convert to unsigned integers
+	image = next(aug_iter)[0].astype('uint8')
+ 
+	# plot image
+	ax[i].imshow(image)
+	ax[i].axis('off')
+  
+  # ImageDataGenerator flipping
+datagen = ImageDataGenerator(horizontal_flip=True, vertical_flip=True)
+
+# iterator
+aug_iter = datagen.flow(img, batch_size=1)
+
+# generate samples and plot
+fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(15,15))
+
+# generate batch of images
+for i in range(3):
+
+	# convert to unsigned integers
+	image = next(aug_iter)[0].astype('uint8')
+ 
+	# plot image
+	ax[i].imshow(image)
+	ax[i].axis('off')
+  
+  # ImageDataGenerator rotation
+datagen = ImageDataGenerator(rotation_range=30, fill_mode='nearest')
+
+# iterator
+aug_iter = datagen.flow(img, batch_size=1)
+
+# generate samples and plot
+fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(15,15))
+
+# generate batch of images
+for i in range(3):
+
+	# convert to unsigned integers
+	image = next(aug_iter)[0].astype('uint8')
+ 
+	# plot image
+	ax[i].imshow(image)
+	ax[i].axis('off')
+  
+  # ImageDataGenerator brightness
+datagen = ImageDataGenerator(brightness_range=[0.4,1.5])
+
+# iterator
+aug_iter = datagen.flow(img, batch_size=1)
+
+# generate samples and plot
+fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(15,15))
+
+# generate batch of images
+for i in range(3):
+
+	# convert to unsigned integers
+	image = next(aug_iter)[0].astype('uint8')
+ 
+	# plot image
+	ax[i].imshow(image)
+	ax[i].axis('off')
+  
+  # ImageDataGenerator zoom
+datagen = ImageDataGenerator(zoom_range=0.3
+
+# iterator
+aug_iter = datagen.flow(img, batch_size=1)
+
+# generate samples and plot
+fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(15,15))
+
+# generate batch of images
+for i in range(3):
+
+	# convert to unsigned integers
+	image = next(aug_iter)[0].astype('uint8')
+ 
+	# plot image
+	ax[i].imshow(image)
+	ax[i].axis('off')
