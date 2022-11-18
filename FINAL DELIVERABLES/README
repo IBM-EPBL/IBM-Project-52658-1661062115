@@ -1,1 +1,907 @@
-
+{
+  "cells": [
+    {
+      "cell_type": "code",
+      "execution_count": 21,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "ZyRTYcwKgs9m",
+        "outputId": "b45514ed-5958-4f0c-d4d3-7fe5a7612d45"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Drive already mounted at /content/drive; to attempt to forcibly remount, call drive.mount(\"/content/drive\", force_remount=True).\n"
+          ]
+        }
+      ],
+      "source": [
+        "from google.colab import drive\n",
+        "drive.mount('/content/drive')"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "eKHSSHzPhQjW"
+      },
+      "source": [
+        "Import the ImageDataGenerator library"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "bOBy2xKGhWKr"
+      },
+      "outputs": [],
+      "source": [
+        "from tensorflow.keras.preprocessing.image import ImageDataGenerator"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "IK5SZiqFjOta"
+      },
+      "source": [
+        "Configure ImageDataGenerator Class"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "3TLmfD-zhiPW"
+      },
+      "outputs": [],
+      "source": [
+        "train_datagen=ImageDataGenerator(rescale=1./255,zoom_range=0.2,vertical_flip=True,horizontal_flip=True)"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "k_leGS0pilh8"
+      },
+      "outputs": [],
+      "source": [
+        "test_data=ImageDataGenerator(rescale=1./255)"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "Umrdi-N2jTCd"
+      },
+      "source": [
+        "Apply ImageDataGenerator functionality to trainset and testset"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "CtiNVnWDj3_U",
+        "outputId": "73635001-614b-4a2e-850a-7935abe75a70"
+      },
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": [
+            "Found 15341 images belonging to 6 classes.\n"
+          ]
+        }
+      ],
+      "source": [
+        "x_train=train_datagen.flow_from_directory(r\"/content/drive/MyDrive/Project Development Phase/data/train\",target_size=(64,64),class_mode=\"categorical\",batch_size=128)"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "qb33lrV6ljZ8",
+        "outputId": "d0d68e7e-abd2-4b0d-e52c-c3152abca139"
+      },
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": [
+            "Found 6825 images belonging to 6 classes.\n"
+          ]
+        }
+      ],
+      "source": [
+        "x_test=test_data.flow_from_directory(r\"/content/drive/MyDrive/Project Development Phase/data/test\",target_size=(64,64),class_mode=\"categorical\",batch_size=128)"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "FjbLZ2O7mCAj",
+        "outputId": "6027e151-0437-4eb8-9284-3a3fe3b499fa"
+      },
+      "outputs": [
+        {
+          "data": {
+            "text/plain": [
+              "{'Left Bundle Branch Block': 0,\n",
+              " 'Normal': 1,\n",
+              " 'Premature Atrial Contraction': 2,\n",
+              " 'Premature Ventricular Contractions': 3,\n",
+              " 'Right Bundle Branch Block': 4,\n",
+              " 'Ventricular Fibrillation': 5}"
+            ]
+          },
+          "execution_count": 8,
+          "metadata": {},
+          "output_type": "execute_result"
+        }
+      ],
+      "source": [
+        "x_train.class_indices"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "LYMxE6bQmT87"
+      },
+      "source": [
+        "MODEL BUILDING"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "mOOWvx4pmV_b"
+      },
+      "source": [
+        "Import the libraries"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "qy7lJlehmThL"
+      },
+      "outputs": [],
+      "source": [
+        "from tensorflow.keras.models import Sequential\n",
+        "from tensorflow.keras.layers import Dense,Convolution2D,MaxPooling2D,Flatten"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "N-EiaDaqm9VB"
+      },
+      "source": [
+        "Initialize the model"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "jM_wUX8Mm4ja"
+      },
+      "outputs": [],
+      "source": [
+        "model=Sequential()"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "nDnRl9R9nOAL"
+      },
+      "source": [
+        "Adding CNN layers"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "Xz-NnX7RnQDB"
+      },
+      "outputs": [],
+      "source": [
+        "model.add(Convolution2D(32,(3,3),activation=\"relu\",strides=(1,1),input_shape=(64,64,3)))"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "EUawbIA7ojjK"
+      },
+      "outputs": [],
+      "source": [
+        "model.add(MaxPooling2D(pool_size=(2,2)))"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "GXqlX3lCqw4R"
+      },
+      "outputs": [],
+      "source": [
+        "model.add(Flatten())"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "QA8gNA-OrJ0C",
+        "outputId": "6888f490-0f3f-4730-9861-91483bbe1f63"
+      },
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": [
+            "Model: \"sequential\"\n",
+            "_________________________________________________________________\n",
+            " Layer (type)                Output Shape              Param #   \n",
+            "=================================================================\n",
+            " conv2d (Conv2D)             (None, 62, 62, 32)        896       \n",
+            "                                                                 \n",
+            " max_pooling2d (MaxPooling2D  (None, 31, 31, 32)       0         \n",
+            " )                                                               \n",
+            "                                                                 \n",
+            " flatten (Flatten)           (None, 30752)             0         \n",
+            "                                                                 \n",
+            "=================================================================\n",
+            "Total params: 896\n",
+            "Trainable params: 896\n",
+            "Non-trainable params: 0\n",
+            "_________________________________________________________________\n"
+          ]
+        }
+      ],
+      "source": [
+        "model.summary()"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "_nuXq_lWrgev"
+      },
+      "source": [
+        "Adding Dense layer"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Hidden layer"
+      ],
+      "metadata": {
+        "id": "ancRKQEbx6sU"
+      }
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "yjE3_l-Bri9Q"
+      },
+      "outputs": [],
+      "source": [
+        "model.add(Dense(500,activation=\"relu\"))"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "0qlJ-tOwuw4Y"
+      },
+      "outputs": [],
+      "source": [
+        "model.add(Dense(500,activation=\"relu\"))"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Output layer"
+      ],
+      "metadata": {
+        "id": "l7ZmyMezx8Sr"
+      }
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "wl6C9kx3uzsH"
+      },
+      "outputs": [],
+      "source": [
+        "model.add(Dense(6,activation=\"softmax\"))"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Configure the learning process"
+      ],
+      "metadata": {
+        "id": "s4KLfoWGyR_c"
+      }
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "UoKoNE6pvJC2"
+      },
+      "outputs": [],
+      "source": [
+        "model.compile(loss=\"categorical_crossentropy\",optimizer=\"adam\",metrics=['accuracy'])"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "HWn3cWrV2pxm",
+        "outputId": "1b8e3cbb-9fde-4161-cf68-c1bc37df5822"
+      },
+      "outputs": [
+        {
+          "data": {
+            "text/plain": [
+              "120"
+            ]
+          },
+          "execution_count": 19,
+          "metadata": {},
+          "output_type": "execute_result"
+        }
+      ],
+      "source": [
+        "len(x_train)"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Train the model"
+      ],
+      "metadata": {
+        "id": "jsSrYnd5yjbm"
+      }
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 20,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "G7X69sNW2ZaS",
+        "outputId": "0e19e4e1-f13b-4d93-e84e-bafec3561ac0"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Epoch 1/5\n",
+            "120/120 [==============================] - 5756s 48s/step - loss: 1.6898 - accuracy: 0.4805 - val_loss: 1.3704 - val_accuracy: 0.4504\n",
+            "Epoch 2/5\n",
+            "120/120 [==============================] - 125s 1s/step - loss: 0.8183 - accuracy: 0.7325 - val_loss: 0.9316 - val_accuracy: 0.6563\n",
+            "Epoch 3/5\n",
+            "120/120 [==============================] - 128s 1s/step - loss: 0.5143 - accuracy: 0.8348 - val_loss: 0.6283 - val_accuracy: 0.7804\n",
+            "Epoch 4/5\n",
+            "120/120 [==============================] - 128s 1s/step - loss: 0.3506 - accuracy: 0.8883 - val_loss: 0.6324 - val_accuracy: 0.8358\n",
+            "Epoch 5/5\n",
+            "120/120 [==============================] - 124s 1s/step - loss: 0.2488 - accuracy: 0.9226 - val_loss: 0.5860 - val_accuracy: 0.8522\n"
+          ]
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "<keras.callbacks.History at 0x7f528299c410>"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 20
+        }
+      ],
+      "source": [
+        "model.fit(x_train,epochs=5,steps_per_epoch=len(x_train),validation_data=x_test,validation_steps=len(x_test))"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "model.fit(x_train,epochs=5,steps_per_epoch=len(x_train),validation_data=x_test,validation_steps=len(x_test))"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "lpTfoKe-9bQH",
+        "outputId": "b42c0ee7-c7a7-40e6-c828-d78ba8276bfc"
+      },
+      "execution_count": 22,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Epoch 1/5\n",
+            "120/120 [==============================] - 140s 1s/step - loss: 0.1920 - accuracy: 0.9401 - val_loss: 0.4968 - val_accuracy: 0.8731\n",
+            "Epoch 2/5\n",
+            "120/120 [==============================] - 147s 1s/step - loss: 0.1607 - accuracy: 0.9512 - val_loss: 0.5703 - val_accuracy: 0.8727\n",
+            "Epoch 3/5\n",
+            "120/120 [==============================] - 142s 1s/step - loss: 0.1358 - accuracy: 0.9572 - val_loss: 0.4914 - val_accuracy: 0.8831\n",
+            "Epoch 4/5\n",
+            "120/120 [==============================] - 140s 1s/step - loss: 0.1181 - accuracy: 0.9640 - val_loss: 0.5450 - val_accuracy: 0.8794\n",
+            "Epoch 5/5\n",
+            "120/120 [==============================] - 133s 1s/step - loss: 0.1109 - accuracy: 0.9666 - val_loss: 0.4703 - val_accuracy: 0.8801\n"
+          ]
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "<keras.callbacks.History at 0x7f527adbd750>"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 22
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "model.fit(x_train,epochs=5,steps_per_epoch=len(x_train),validation_data=x_test,validation_steps=len(x_test))"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "1eic4oAxKU2w",
+        "outputId": "403df2ad-2a85-4ae7-97b9-c645e040d306"
+      },
+      "execution_count": 23,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Epoch 1/5\n",
+            "120/120 [==============================] - 127s 1s/step - loss: 0.1022 - accuracy: 0.9692 - val_loss: 0.5888 - val_accuracy: 0.8659\n",
+            "Epoch 2/5\n",
+            "120/120 [==============================] - 139s 1s/step - loss: 0.0934 - accuracy: 0.9710 - val_loss: 0.5789 - val_accuracy: 0.8689\n",
+            "Epoch 3/5\n",
+            "120/120 [==============================] - 128s 1s/step - loss: 0.0862 - accuracy: 0.9729 - val_loss: 0.4989 - val_accuracy: 0.8848\n",
+            "Epoch 4/5\n",
+            "120/120 [==============================] - 128s 1s/step - loss: 0.0778 - accuracy: 0.9765 - val_loss: 0.6542 - val_accuracy: 0.8759\n",
+            "Epoch 5/5\n",
+            "120/120 [==============================] - 137s 1s/step - loss: 0.0793 - accuracy: 0.9745 - val_loss: 0.5369 - val_accuracy: 0.8844\n"
+          ]
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "<keras.callbacks.History at 0x7f527adc0a50>"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 23
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Save the model"
+      ],
+      "metadata": {
+        "id": "ShRS9XSIzCzy"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "model.save('arrhythmia.h5')"
+      ],
+      "metadata": {
+        "id": "Ftb3bmYCPdav"
+      },
+      "execution_count": 24,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Testing the model"
+      ],
+      "metadata": {
+        "id": "nPtpGXgTPril"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import numpy as np\n",
+        "from tensorflow.keras.models import load_model\n",
+        "from tensorflow.keras.preprocessing import image"
+      ],
+      "metadata": {
+        "id": "D5W3ANXvPl97"
+      },
+      "execution_count": 25,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "model=load_model('arrhythmia.h5')"
+      ],
+      "metadata": {
+        "id": "dQN3ba7fQOhP"
+      },
+      "execution_count": 26,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "img=image.load_img(\"/content/drive/MyDrive/Project Development Phase/data/test/Right Bundle Branch Block/fig_101.png\",target_size=(64,64))"
+      ],
+      "metadata": {
+        "id": "hS7wCWFgQZ0e"
+      },
+      "execution_count": 69,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "img"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 81
+        },
+        "id": "AWeZEFGjRkox",
+        "outputId": "a43ca918-3284-4389-da32-30cff1b7235f"
+      },
+      "execution_count": 70,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "<PIL.Image.Image image mode=RGB size=64x64 at 0x7F527E446490>"
+            ],
+            "image/png": "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAACwklEQVR4nO2ZO68BQRTH916PTjwaIjqUvoFW4XP4BiT0BPFYiU0ohFYjUfABJKKQaFWitWg0CGt2dm6xiYj12L32zEay/2ocM/85vz27M9nZH0II8836NTqBT2UCGC0TwGiZAEbLBDBaJoDRMgGMlgmgQplMBs6cBkAgEIAzpwGAEIIzpwEQiUTgzMEBEEJOpxPO/4fCO/F+v3c4HEDm4BU4HA5w2TMUAObzOag/OMB4PP7uVQh0E2AoAByPx99fwFnAAbbbrcVigfMHB4jH46D+sAAsy8rbsCRJQFPAbmTL5TIUCjEMgxCy2WwQU8ACSJIkP8HfCkBBgM8A6P51lVmB55rNZnDmVwECLBaLa3u32wHNohagXC6Xy2WGYTDGuVxOzZDtdnttr9frfySnSkSjqtWqIAhqejabzWt7Op1qnUil3leAEFIqleT2ZrNJpVJ2uz2bzb4deHvbnE6nf1/i13oDUCwWeZ5Pp9PyT5/PJze8Xq8oiq/HxmKxa1sQhA+SfKkX1cnn8y/+5ThOkiSVha7VaurvCk16CoAQejtYZhgOh+fzmRDS6/XkOMb4crnc9sxms5/l+VSaH+JbyRXAGB8Oh1qtJifd6XQIIZVK5bZnq9V6ZsLzfLFY5DiOZdlSqaQ1h48A1GswGDyM1+v1uwjHcZqcKQG0221l8OH1FkWRZdnbJfi1rFCLg2KpUAYfrq0WiyWZTDIM0+l0EomEKmsKGo1GWodcLpfJZCIIAsaYENLtdhuNhrIbJYBCoaAMiqL4diBCaLVaDYfDZx0o3UIP34nVnFZYrVa/3+/3+591oPSJKRgM3kU2m40uzpQA3G73XaTf7+viTAnA5XLdRTwejy7OlADC4fBdhOj0KksJQHm9eZ7Xxdmw78TRaFQXH0qnEnAHW5QqoDxhxxjr4myeCxktE8BomQBG6+sB/gD0Q2/H9lcRDwAAAABJRU5ErkJggg==\n"
+          },
+          "metadata": {},
+          "execution_count": 70
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "x=image.img_to_array(img)"
+      ],
+      "metadata": {
+        "id": "9dyZP2wNRnjW"
+      },
+      "execution_count": 71,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "x"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "LUUKngIPRqwt",
+        "outputId": "baf7f9d2-4e06-4530-946a-fab3ee117004"
+      },
+      "execution_count": 72,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "array([[[255., 255., 255.],\n",
+              "        [255., 255., 255.],\n",
+              "        [255., 255., 255.],\n",
+              "        ...,\n",
+              "        [255., 255., 255.],\n",
+              "        [255., 255., 255.],\n",
+              "        [255., 255., 255.]],\n",
+              "\n",
+              "       [[255., 255., 255.],\n",
+              "        [255., 255., 255.],\n",
+              "        [255., 255., 255.],\n",
+              "        ...,\n",
+              "        [255., 255., 255.],\n",
+              "        [255., 255., 255.],\n",
+              "        [255., 255., 255.]],\n",
+              "\n",
+              "       [[255., 255., 255.],\n",
+              "        [255., 255., 255.],\n",
+              "        [255., 255., 255.],\n",
+              "        ...,\n",
+              "        [255., 255., 255.],\n",
+              "        [255., 255., 255.],\n",
+              "        [255., 255., 255.]],\n",
+              "\n",
+              "       ...,\n",
+              "\n",
+              "       [[255., 255., 255.],\n",
+              "        [255., 255., 255.],\n",
+              "        [255., 255., 255.],\n",
+              "        ...,\n",
+              "        [255., 255., 255.],\n",
+              "        [255., 255., 255.],\n",
+              "        [255., 255., 255.]],\n",
+              "\n",
+              "       [[255., 255., 255.],\n",
+              "        [255., 255., 255.],\n",
+              "        [255., 255., 255.],\n",
+              "        ...,\n",
+              "        [255., 255., 255.],\n",
+              "        [255., 255., 255.],\n",
+              "        [255., 255., 255.]],\n",
+              "\n",
+              "       [[255., 255., 255.],\n",
+              "        [255., 255., 255.],\n",
+              "        [255., 255., 255.],\n",
+              "        ...,\n",
+              "        [255., 255., 255.],\n",
+              "        [255., 255., 255.],\n",
+              "        [255., 255., 255.]]], dtype=float32)"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 72
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "x=np.expand_dims(x,axis=0)"
+      ],
+      "metadata": {
+        "id": "wKAp15cnRwpi"
+      },
+      "execution_count": 73,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "x"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "y6paH5HtSExS",
+        "outputId": "c942d2c8-bb8e-46f8-8cda-ef9b1a4e9568"
+      },
+      "execution_count": 74,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "array([[[[255., 255., 255.],\n",
+              "         [255., 255., 255.],\n",
+              "         [255., 255., 255.],\n",
+              "         ...,\n",
+              "         [255., 255., 255.],\n",
+              "         [255., 255., 255.],\n",
+              "         [255., 255., 255.]],\n",
+              "\n",
+              "        [[255., 255., 255.],\n",
+              "         [255., 255., 255.],\n",
+              "         [255., 255., 255.],\n",
+              "         ...,\n",
+              "         [255., 255., 255.],\n",
+              "         [255., 255., 255.],\n",
+              "         [255., 255., 255.]],\n",
+              "\n",
+              "        [[255., 255., 255.],\n",
+              "         [255., 255., 255.],\n",
+              "         [255., 255., 255.],\n",
+              "         ...,\n",
+              "         [255., 255., 255.],\n",
+              "         [255., 255., 255.],\n",
+              "         [255., 255., 255.]],\n",
+              "\n",
+              "        ...,\n",
+              "\n",
+              "        [[255., 255., 255.],\n",
+              "         [255., 255., 255.],\n",
+              "         [255., 255., 255.],\n",
+              "         ...,\n",
+              "         [255., 255., 255.],\n",
+              "         [255., 255., 255.],\n",
+              "         [255., 255., 255.]],\n",
+              "\n",
+              "        [[255., 255., 255.],\n",
+              "         [255., 255., 255.],\n",
+              "         [255., 255., 255.],\n",
+              "         ...,\n",
+              "         [255., 255., 255.],\n",
+              "         [255., 255., 255.],\n",
+              "         [255., 255., 255.]],\n",
+              "\n",
+              "        [[255., 255., 255.],\n",
+              "         [255., 255., 255.],\n",
+              "         [255., 255., 255.],\n",
+              "         ...,\n",
+              "         [255., 255., 255.],\n",
+              "         [255., 255., 255.],\n",
+              "         [255., 255., 255.]]]], dtype=float32)"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 74
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "pred=model.predict(x)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "Ki91RBy_SGzE",
+        "outputId": "92cde29c-7c62-4bab-a964-bc6b6600296c"
+      },
+      "execution_count": 75,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "1/1 [==============================] - 0s 43ms/step\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "pred"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "VgTRzNgCSPi5",
+        "outputId": "7fb6bceb-0f60-4d84-a47a-1d052eef6201"
+      },
+      "execution_count": 76,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "array([[0., 0., 0., 0., 1., 0.]], dtype=float32)"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 76
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "index=['Left Bundle Branch Block',\n",
+        " 'Normal',\n",
+        " 'Premature Atrial Contraction',\n",
+        " 'Premature Ventricular Contractions',\n",
+        " 'Right Bundle Branch Block',\n",
+        " 'Ventricular Fibrillation']"
+      ],
+      "metadata": {
+        "id": "dH-ddaJASfAk"
+      },
+      "execution_count": 77,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "index[np.argmax(pred)]"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 35
+        },
+        "id": "xTOI13Y9SqrX",
+        "outputId": "1b6f693d-766f-4c99-a382-4ba0425c243c"
+      },
+      "execution_count": 78,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "'Right Bundle Branch Block'"
+            ],
+            "application/vnd.google.colaboratory.intrinsic+json": {
+              "type": "string"
+            }
+          },
+          "metadata": {},
+          "execution_count": 78
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "colab": {
+      "provenance": []
+    },
+    "kernelspec": {
+      "display_name": "Python 3",
+      "name": "python3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}
